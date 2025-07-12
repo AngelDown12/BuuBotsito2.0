@@ -43,10 +43,10 @@ const defaultMenu = {
 
 \t\t\t𝑺 𝑶 𝑭 𝑰 - 𝐌 𝐄 𝐍 𝐔́
 `.trimStart(),
-header: '*╭━〔* *%category* *〕*',
-body: '*┃➤* *%cmd*\n',
-footer: ' ╰━━━━━━\n',
-after: '',
+  header: '*╭━〔* *%category* *〕*',
+  body: '*┃➤* *%cmd*\n',
+  footer: ' ╰━━━━━━\n',
+  after: '',
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
@@ -87,26 +87,24 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
     let uptime = clockString(_uptime)
     let totalreg = Object.keys(global.db.data.users).length
     let rtotalreg = Object.values(global.db.data.users).filter(user => user.registered == true).length
-    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
-      return {
-        help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
-        tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-        prefix: 'customPrefix' in plugin,
-        limit: plugin.limit,
-        premium: plugin.premium,
-        enabled: !plugin.disabled,
-      }
-    })
+    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => ({
+      help: Array.isArray(plugin.help) ? plugin.help : [plugin.help],
+      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
+      prefix: 'customPrefix' in plugin,
+      limit: plugin.limit,
+      premium: plugin.premium,
+      enabled: !plugin.disabled,
+    }))
     for (let plugin of help)
       if (plugin && 'tags' in plugin)
         for (let tag of plugin.tags)
           if (!(tag in tags) && tag) tags[tag] = tag
-    conn.menu = conn.menu ? conn.menu : {}
+    conn.menu = conn.menu || {}
     let before = conn.menu.before || defaultMenu.before
     let header = conn.menu.header || defaultMenu.header
     let body = conn.menu.body || defaultMenu.body
     let footer = conn.menu.footer || defaultMenu.footer
-    let after = conn.menu.after || (conn.user.jid == global.conn.user.jid ? '' : ``) + defaultMenu.after
+    let after = conn.menu.after || defaultMenu.after
     let _text = [
       before,
       ...Object.keys(tags).map(tag => {
@@ -114,8 +112,6 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
           ...help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help).map(menu => {
             return menu.help.map(help => {
               return body.replace(/%cmd/g, menu.prefix ? help : '%p' + help)
-                .replace(/%islimit/g, menu.limit ? '' : '')
-                .replace(/%isPremium/g, menu.premium ? '' : '')
                 .trim()
             }).join('\n')
           }),
@@ -124,32 +120,30 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
       }),
       after
     ].join('\n')
-    let text = typeof conn.menu == 'string' ? conn.menu : typeof conn.menu == 'object' ? _text : ''
+    let text = typeof conn.menu == 'string' ? conn.menu : _text
     let replace = {
       '%': '%',
       p: _p, uptime, muptime,
-      taguser: '@' + m.sender.split("@s.whatsapp.net")[0],
+      taguser: '@' + m.sender.split("@")[0],
       wasp: '@0',
       me: conn.getName(conn.user.jid),
       npmname: _package.name,
       version: _package.version,
       npmdesc: _package.description,
       npmmain: _package.main,
-      author: _package.author.name,
+      author: _package.author?.name || '',
       license: _package.license,
       exp: exp - min,
       maxexp: xp,
       totalexp: exp,
       xp4levelup: max - exp,
-      github: _package.homepage ? _package.homepage.url || _package.homepage : '[unknown github url]',
+      github: _package.homepage?.url || _package.homepage || '[unknown github url]',
       level, limit, name, weton, week, date, dateIslamic, time, totalreg, rtotalreg,
       readmore: readMore
     }
-    text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
-    
-    let pp = './storage/img/siskedurl.jpg'
-    await conn.sendFile(m.chat, pp, 'thumbnail.jpg', text.trim(), m, null)
-
+    text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join('|')})`, 'g'), (_, name) => replace[name])
+    let url = 'https://files.catbox.moe/2txrtp.jpg'
+    await conn.sendFile(m.chat, url, 'menu.jpg', text.trim(), m)
   } catch (e) {
     conn.reply(m.chat, 'Lo sentimos, el menú tiene un error.', m)
     throw e
@@ -158,7 +152,29 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
 handler.help = ['menu']
 handler.tags = ['main']
-handler.command = ['menu', 'help', 'menú', 'comandos', 'allmenu', 'menucompleto', 'funciones'] 
+handler.command = ['menu'] // se mantiene como referencia
+handler.customPrefix = /^(menu|help|menú|comandos|allmenu|menucompleto|funciones)$/i
+handler.exp = 50
+handler.register = true
+handler.fail = null
+handler.owner = false
+handler.group = false
+handler.private = false
+handler.admin = false
+handler.botAdmin = false
+handler.limit = false
+handler.premium = false
+handler.level = 0
+handler.money = 0
+handler.nsfw = false
+handler.rpg = false
+handler.game = false
+handler.text = true
+handler.usage = null
+handler.desc = null
+handler.category = 'main'
+handler.enabled = true
+handler.noPrefix = true // <-- Esto permite que sea sin prefijo
 export default handler
 
 const more = String.fromCharCode(8206)
@@ -169,4 +185,4 @@ function clockString(ms) {
   let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
   let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-        }
+}
