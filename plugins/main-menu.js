@@ -16,11 +16,12 @@ let handler = async (m, { conn }) => {
 
   const text = `🔮 𝐌 𝐔 𝐋 𝐓 𝐈 - 𝐌 𝐄 𝐍 𝐔́ 🔮
 
-━━━《  🔮  ESTADO DEL BOT  🔮  》━━━╮
-┃ 🔮 Activo: *${muptime}*
-┃ 🔮 Host: *${host}*
-┃ 🔮 Usuarios: *${totalreg}*
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+┣━━━━━━━━━━━━━━┫
+┃🔮 Activo: *${muptime}*
+┃🔮 Host: *${host}*
+┃🔮 Usuarios: *${totalreg}*
+╰━━━━━━━
 
   「 🔮 𝘐𝘯𝘧𝘰 🔮 」
 ┣━━━━━━━━━━━━━━┫
