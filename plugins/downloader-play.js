@@ -2,7 +2,7 @@
 let handler = async (m, { conn, text }) => {
   if (!text) {
     return m.reply(
-      `╭─⬣「 ** 」⬣
+      `╭─⬣「 *𝐁𝐔𝐔 𝐁𝐎𝐓 🔮* 」⬣
 │ ≡◦ 🎧 *Uso correcto del comando:*
 │ ≡◦ play shakira soltera
 ╰─⬣`
@@ -15,7 +15,7 @@ let handler = async (m, { conn, text }) => {
 
     if (!json.status || !json.result?.downloadUrl) {
       return m.reply(
-        `╭─⬣「 *𝐁𝐚𝐫𝐝𝐨𝐜𝐤 𝐁𝐨𝐭* 」⬣
+        `╭─⬣「 *𝐁𝐔𝐔 𝐁𝐎𝐓 🔮* 」⬣
 │ ≡◦ ❌ *No se encontró resultado para:* ${text}
 ╰─⬣`
       );
@@ -44,7 +44,7 @@ let handler = async (m, { conn, text }) => {
   } catch (e) {
     console.error(e);
     return m.reply(
-      `╭─⬣「 *𝐁𝐚𝐫𝐝𝐨𝐜𝐤 𝐁𝐨𝐭* 」⬣
+      `╭─⬣「 *𝐁𝐔𝐔 𝐁𝐎𝐓 🔮* 」⬣
 │ ≡◦ ⚠️ *Error al procesar la solicitud.*
 │ ≡◦ Intenta nuevamente más tarde.
 ╰─⬣`
