@@ -50,9 +50,9 @@ global.rcanal = {
 contextInfo: {
 isForwarded: true,
 forwardedNewsletterMessageInfo: {
-newsletterJid: "120363328554424977@newsletter",
+newsletterJid: "120363401389725319@newsletter",
 serverMessageId: 100,
-newsletterName: '✨Twins bots✨💚❤️🩵',
+newsletterName: 'gg',
 },
 externalAdReply: { 
 showAdAttribution: true,
