@@ -60,7 +60,7 @@ title: '𝐁𝐔𝐔 - 𝐁𝐎𝐓 🔮',
 body: '𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 🕷️',
 previewType: "PHOTO",
 thumbnailUrl: 'https://files.catbox.moe/2txrtp.jpg',
-sourceUrl: 'https://www.instagram.com/josssi_bot.ff',
+sourceUrl: 'https://www.instagram.com/baki_hm66?igsh=cHk1eW1uZXF2ZWsy',
 mediaType: 1,
 renderLargerThumbnail: false
 },},}
