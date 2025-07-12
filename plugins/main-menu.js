@@ -1,51 +1,47 @@
 import { xpRange } from '../lib/levelling.js'
 
 let tags = {
-  main: '📚 Información',
-  search: '🔎 Búsquedas',
-  game: '🎮 Juegos',
-  rpg: '🌠 RPG',
-  rg: '📁 Registro',
-  sticker: '🏞 Stickers',
-  img: '📸 Imágenes',
-  freefire: '📌 Free Fire',
-  group: '👥 Grupos',
-  logo: '🎨 Logos',
-  nable: '📴 On / Off',
-  downloader: '📥 Descargas',
-  tools: '🔧 Herramientas',
-  fun: '🎲 Diversión',
-  nsfw: '🔞 NSFW',
-  owner: '😺 Creador',
-  audio: '🔉 Audios',
-  advanced: '💠 Avanzado',
-  anime: '👑 Anime'
+  main: 'Información 📚',
+  search: 'Búsquedas 🔎',
+  game: 'Juegos 🎮',
+  rpg: 'RPG 🌠',
+  rg: 'Registro 📁',
+  sticker: 'Stickers 🏞',
+  img: 'Imágenes 📸',
+  freefire: 'Free Fire 📌',
+  group: 'Grupos 👥',
+  logo: 'Logos 🎨',
+  nable: 'Funciones 🔁',
+  downloader: 'Descargas 📥',
+  tools: 'Herramientas 🔧',
+  fun: 'Diversión 🎲',
+  nsfw: 'Contenido 🔞',
+  owner: 'Administrador 👤',
+  audio: 'Audios 🔉',
+  advanced: 'Avanzado ⚙️',
+  anime: 'Anime 👑'
 }
 
-const menuDesign = {
+const defaultMenu = {
   before: `
-┌───〔 🧠 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 𝗗𝗘𝗧𝗘𝗖𝗧𝗔𝗗𝗢 〕───┐
-│👤 Usuario: %name
-│📊 Nivel: %level | ⚡ EXP: %exp/%maxexp
-│🌐 Modo: %mode
-│⏱ Tiempo Activo: %muptime
-│📁 Registrados: %totalreg
-└────────────────────────────┘
+╭─────〔 PANEL DEL USUARIO 〕─────╮
+│ 👤 Usuario: %name
+│ 🔢 Nivel: %level (%exp/%maxexp XP)
+│ 🌐 Modo: %mode
+│ 🕒 Activo: %muptime
+│ 📋 Usuarios registrados: %totalreg
+╰────────────────────────────────╯
 
-🎯 *Bienvenido al menú del sistema.*
-📂 A continuación verás todos los módulos disponibles:
-━━━━━━━━━━━━━━━━━━━━━━━
+▸ *Módulos disponibles:*
 `.trim(),
 
-  header: '\n🔹 *%category*',
-  body: '╰➤ %cmd',
+  header: '\n📂 %category',
+  body: '   • %cmd',
   footer: '',
   after: `
-━━━━━━━━━━━━━━━━━━━━━━━
 
-💡 Usa cada comando con sabiduría.
-👑 Sistema ejecutado con éxito.
-`.trim()
+▸ Sistema operativo del bot funcionando correctamente.
+▸ Usa los comandos según las categorías.`
 }
 
 let handler = async (m, { conn }) => {
@@ -55,7 +51,7 @@ let handler = async (m, { conn }) => {
     const name = await conn.getName(m.sender)
     const totalreg = Object.keys(global.db.data.users).length
     const muptime = clockString(process.uptime() * 1000)
-    const mode = global.opts.self ? 'Privado 🔒' : 'Público 🌍'
+    const mode = global.opts.self ? 'Privado' : 'Público'
 
     const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
       help: Array.isArray(p.help) ? p.help : [p.help],
@@ -63,28 +59,28 @@ let handler = async (m, { conn }) => {
       prefix: 'customPrefix' in p
     }))
 
-    const sections = {}
-    for (const tag in tags) sections[tag] = []
+    const categories = {}
+    for (const tag in tags) categories[tag] = []
 
     help.forEach(plugin => {
       plugin.tags.forEach(tag => {
-        if (tag in sections) {
-          sections[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
+        if (tag in categories) {
+          categories[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
         }
       })
     })
 
-    let text = [menuDesign.before]
+    let text = [defaultMenu.before]
     for (const tag of Object.keys(tags)) {
-      if (sections[tag].length) {
+      if (categories[tag].length) {
         text.push(
-          menuDesign.header.replace(/%category/g, tags[tag]),
-          sections[tag].map(cmd => menuDesign.body.replace(/%cmd/g, cmd)).join('\n'),
-          menuDesign.footer
+          defaultMenu.header.replace(/%category/g, tags[tag]),
+          categories[tag].map(cmd => defaultMenu.body.replace(/%cmd/g, cmd)).join('\n'),
+          defaultMenu.footer
         )
       }
     }
-    text.push(menuDesign.after)
+    text.push(defaultMenu.after)
 
     const replace = {
       '%': '%',
@@ -103,22 +99,22 @@ let handler = async (m, { conn }) => {
       caption: finalText,
       image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
       buttons: [
-        { buttonId: 'menurpg', buttonText: { displayText: '🏛️ MENU RPG' }, type: 1 },
-        { buttonId: 'code', buttonText: { displayText: '⚙️ SUBBOT' }, type: 1 }
+        { buttonId: 'menurpg', buttonText: { displayText: '📌 Ver RPG' }, type: 1 },
+        { buttonId: 'code', buttonText: { displayText: '⚙️ Ver Subbot' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '❌ Error al generar el menú visual.', m)
+    conn.reply(m.chat, '❌ Error al generar el menú.', m)
   }
 }
 
 handler.command = new RegExp
 handler.tags = ['main']
 handler.register = true
-handler.customPrefix = /^(menu|menú|ayuda|help)$/i
+handler.customPrefix = /^(menu|menú|help|ayuda)$/i
 
 export default handler
 
