@@ -1,5 +1,5 @@
-const handler = async (m, { conn }) => {
-  const texto = `✨ *Bienvenido al Bot* ✨\n\nElige una opción del menú:`
+const handler = async (m, { conn, command }) => {
+  const texto = `✨ *¡Hola, soy SonicBot-MF!* ✨\n\nSelecciona una opción del menú:`
 
   const botones = [
     { buttonId: '.menu', buttonText: { displayText: '📋 Menú' }, type: 1 },
@@ -17,5 +17,5 @@ const handler = async (m, { conn }) => {
   await conn.sendMessage(m.chat, mensajeBotones, { quoted: m })
 }
 
-handler.command = ['botones', 'menuprueba'] // Puedes cambiar el nombre del comando
+handler.command = ['po'] // activa con .po
 export default handler
