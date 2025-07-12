@@ -19,7 +19,7 @@ let handler = async (m, { conn }) => {
 
 ┣━━━━━━━━━━━━━━┫
 ┃🔮 Activo: *${muptime}*
-┃🔮 Host: *${host}*
+┃🔮 Host: *Sky*
 ┃🔮 Usuarios: *${totalreg}*
 ╰━━━━━━━
 
