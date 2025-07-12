@@ -106,15 +106,14 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }, { quoted: m })
 
     await conn.sendMessage(m.chat, {
-      image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
-      caption: text,
-      footer: '🧠 BLACK CLOVER SYSTEM ☘️',
-      buttons: [
-        { buttonId: `${_p}menurpg`, buttonText: { displayText: '🏛️ M E N U R P G' }, type: 1 },
-        { buttonId: `${_p}code`, buttonText: { displayText: '🕹 ＳＥＲＢＯＴ' }, type: 1 }
-      ],
-      viewOnce: false
-    }, { quoted: m })
+  image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
+  caption: text,
+  footer: '🧠 BLACK CLOVER SYSTEM ☘️',
+  templateButtons: [
+    { index: 1, quickReplyButton: { displayText: '🏛️ M E N U R P G', id: `${_p}menurpg` } },
+    { index: 2, quickReplyButton: { displayText: '🕹 ＳＥＲＢＯＴ', id: `${_p}code` } }
+  ]
+}, { quoted: m })
 
   } catch (e) {
     console.error(e)
