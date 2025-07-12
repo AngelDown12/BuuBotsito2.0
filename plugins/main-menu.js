@@ -1,43 +1,51 @@
 import { xpRange } from '../lib/levelling.js'
 
 let tags = {
-  main: 'Info 📚',
-  search: 'Busquedas 🔎',
-  game: 'Juegos 🎮',
-  rpg: 'RPG 🌠',
-  rg: 'Registro 📁',
-  sticker: 'Stickers 🏞',
-  img: 'Imágenes 📸',
-  freefire: 'Free Fire 📌',
-  group: 'Grupos 👥',
-  logo: 'Logo - maker 🎨',
-  nable: 'On / Off 📴',
-  downloader: 'Descargas 📥',
-  tools: 'Herramientas 🔧',
-  fun: 'Diversión 🎲',
-  nsfw: 'Nsfw 🔞',
-  owner: 'Creador 😺',
-  audio: 'Audios 🔉',
-  advanced: 'Avanzado 💠',
-  anime: 'Anime 👑',
+  main: '📚 Información',
+  search: '🔎 Búsquedas',
+  game: '🎮 Juegos',
+  rpg: '🌠 RPG',
+  rg: '📁 Registro',
+  sticker: '🏞 Stickers',
+  img: '📸 Imágenes',
+  freefire: '📌 Free Fire',
+  group: '👥 Grupos',
+  logo: '🎨 Logos',
+  nable: '📴 On / Off',
+  downloader: '📥 Descargas',
+  tools: '🔧 Herramientas',
+  fun: '🎲 Diversión',
+  nsfw: '🔞 NSFW',
+  owner: '😺 Creador',
+  audio: '🔉 Audios',
+  advanced: '💠 Avanzado',
+  anime: '👑 Anime'
 }
 
-const defaultMenu = {
+const menuDesign = {
   before: `
-╔══════『 𝗘𝗦𝗧𝗔𝗗𝗢 𝗗𝗘𝗟 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 』══════╗
-👤 Usuario: %name
-📊 Nivel: %level | ⚡ EXP: %exp/%maxexp
-🌐 Modo: %mode | ⏱ Activo: %muptime
-📁 Registrados: %totalreg
-╚════════════════════════════╝
+┌───〔 🧠 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 𝗗𝗘𝗧𝗘𝗖𝗧𝗔𝗗𝗢 〕───┐
+│👤 Usuario: %name
+│📊 Nivel: %level | ⚡ EXP: %exp/%maxexp
+│🌐 Modo: %mode
+│⏱ Tiempo Activo: %muptime
+│📁 Registrados: %totalreg
+└────────────────────────────┘
 
-┏━━━❲ 𝗖𝗢𝗠𝗔𝗡𝗗𝗢𝗦 ❳━━━┓
+🎯 *Bienvenido al menú del sistema.*
+📂 A continuación verás todos los módulos disponibles:
+━━━━━━━━━━━━━━━━━━━━━━━
 `.trim(),
 
-  header: '\n╭──〔 %category 〕───╮',
-  body: '│ ✅ %cmd',
-  footer: '╰────────────────────╯',
-  after: `\n✅ Menú cargado correctamente.`
+  header: '\n🔹 *%category*',
+  body: '╰➤ %cmd',
+  footer: '',
+  after: `
+━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Usa cada comando con sabiduría.
+👑 Sistema ejecutado con éxito.
+`.trim()
 }
 
 let handler = async (m, { conn }) => {
@@ -49,34 +57,34 @@ let handler = async (m, { conn }) => {
     const muptime = clockString(process.uptime() * 1000)
     const mode = global.opts.self ? 'Privado 🔒' : 'Público 🌍'
 
-    let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
+    const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
       help: Array.isArray(p.help) ? p.help : [p.help],
       tags: Array.isArray(p.tags) ? p.tags : [],
       prefix: 'customPrefix' in p
     }))
 
-    const groups = {}
-    for (const tag in tags) groups[tag] = []
+    const sections = {}
+    for (const tag in tags) sections[tag] = []
 
     help.forEach(plugin => {
       plugin.tags.forEach(tag => {
-        if (tag in groups) {
-          groups[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
+        if (tag in sections) {
+          sections[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
         }
       })
     })
 
-    let menuText = [defaultMenu.before]
+    let text = [menuDesign.before]
     for (const tag of Object.keys(tags)) {
-      if (groups[tag].length) {
-        menuText.push(
-          defaultMenu.header.replace(/%category/g, tags[tag]),
-          groups[tag].map(cmd => defaultMenu.body.replace(/%cmd/g, cmd)).join('\n'),
-          defaultMenu.footer
+      if (sections[tag].length) {
+        text.push(
+          menuDesign.header.replace(/%category/g, tags[tag]),
+          sections[tag].map(cmd => menuDesign.body.replace(/%cmd/g, cmd)).join('\n'),
+          menuDesign.footer
         )
       }
     }
-    menuText.push(defaultMenu.after)
+    text.push(menuDesign.after)
 
     const replace = {
       '%': '%',
@@ -89,22 +97,21 @@ let handler = async (m, { conn }) => {
       mode
     }
 
-    const finalMenu = menuText.join('\n').replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
+    const finalText = text.join('\n').replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
 
     await conn.sendMessage(m.chat, {
-      caption: finalMenu,
+      caption: finalText,
       image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
-      footer: null,
       buttons: [
-        { buttonId: 'menurpg', buttonText: { displayText: '🏛️ M E N U  R P G' }, type: 1 },
-        { buttonId: 'code', buttonText: { displayText: '⚙️ S U B B O T' }, type: 1 }
+        { buttonId: 'menurpg', buttonText: { displayText: '🏛️ MENU RPG' }, type: 1 },
+        { buttonId: 'code', buttonText: { displayText: '⚙️ SUBBOT' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '❌ Error al cargar el menú.', m)
+    conn.reply(m.chat, '❌ Error al generar el menú visual.', m)
   }
 }
 
