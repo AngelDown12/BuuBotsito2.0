@@ -13,7 +13,7 @@ let handler = async (m, { conn }) => {
   const uptime = process.uptime() * 1000;
   const muptime = clockString(uptime);
 
-  const text = `🔮 𝐌𝐄𝐍𝐔́ 𝐏𝐑𝐈𝐍𝐂𝐈𝐏𝐀𝐋 🔮
+  const texto = `🔮 𝐌𝐄𝐍𝐔́ 𝐏𝐑𝐈𝐍𝐂𝐈𝐏𝐀𝐋 🔮
 
 🔮 𝐀𝐜𝐭𝐢𝐯𝐨: *${muptime}*
 🔮 𝐇𝐨𝐬𝐭: *𝐒𝐤𝐲*
@@ -22,20 +22,20 @@ let handler = async (m, { conn }) => {
 🔮 𝐔𝐬𝐚: *.𝐦𝐞𝐧𝐮* 𝐩𝐚𝐫𝐚 𝐯𝐞𝐫 𝐞𝐥 𝐦𝐞𝐧𝐮́ 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐨.
 `;
 
-  const templateButtons = [
-    { index: 1, urlButton: { displayText: '👑 𝐎𝐰𝐧𝐞𝐫', url: 'https://wa.me/5212731590195' } },
-    { index: 2, urlButton: { displayText: '🛒 𝐂𝐨𝐦𝐩𝐫𝐚𝐫', url: 'https://wa.me/5212731590195' } }
+  const botones = [
+    { buttonId: '.owner', buttonText: { displayText: '👑 𝐂𝐫𝐞𝐚𝐝𝐨𝐫' }, type: 1 },
+    { buttonId: '.comprar', buttonText: { displayText: '🛒 𝐂𝐨𝐦𝐩𝐫𝐚𝐫 𝐁𝐨𝐭' }, type: 1 }
   ];
 
-  const templateMessage = {
+  const buttonMessage = {
     image: { url: img },
-    caption: text,
+    caption: texto,
     footer: '🔮 𝐁𝐨𝐭 𝐳𝐳𝐳 | 𝐁𝐲: 𝘼𝙡𝙚𝙚 👑',
-    templateButtons: templateButtons,
+    buttons: botones,
     headerType: 4
   };
 
-  await conn.sendMessage(m.chat, templateMessage, { quoted: m });
+  await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
 };
 
 handler.customPrefix = /^(menu|menú|ayuda|help)$/i;
