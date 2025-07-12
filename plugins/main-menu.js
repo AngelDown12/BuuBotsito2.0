@@ -1,52 +1,47 @@
 import { xpRange } from '../lib/levelling.js'
 
 let tags = {
-  main: 'Información',
-  search: 'Búsquedas',
-  game: 'Juegos',
-  rpg: 'RPG',
-  rg: 'Registro',
-  sticker: 'Stickers',
-  img: 'Imágenes',
-  freefire: 'Free Fire',
-  group: 'Grupos',
-  logo: 'Logos',
-  nable: 'Funciones',
-  downloader: 'Descargas',
-  tools: 'Herramientas',
-  fun: 'Diversión',
-  nsfw: 'Contenido para adultos',
-  owner: 'Administrador',
-  audio: 'Audios',
-  advanced: 'Avanzado',
-  anime: 'Anime'
+  main: '📚 Información',
+  search: '🔍 Búsquedas',
+  game: '🎮 Juegos',
+  rpg: '🌌 RPG',
+  rg: '🗂️ Registro',
+  sticker: '🖼️ Stickers',
+  img: '📷 Imágenes',
+  freefire: '🔥 Free Fire',
+  group: '👥 Grupos',
+  logo: '🎨 Logos',
+  nable: '🔁 Funciones',
+  downloader: '📥 Descargas',
+  tools: '🛠️ Herramientas',
+  fun: '🎲 Diversión',
+  nsfw: '🔞 Contenido +18',
+  owner: '👑 Administrador',
+  audio: '🎧 Audios',
+  advanced: '⚙️ Avanzado',
+  anime: '🌸 Anime'
 }
 
 const defaultMenu = {
   before: `
-══════════════════════════════
-         MENÚ DE COMANDOS
-══════════════════════════════
+┏━━━━━━━━━━━━━━━━━━━━━━━┓
+┃       🧾 MENÚ GENERAL DEL BOT
+┃━━━━━━━━━━━━━━━━━━━━━━━
+┃ 👤 Usuario: %name
+┃ 🎯 Nivel: %level  |  ⚡ EXP: %exp / %maxexp
+┃ 🌐 Modo: %mode
+┃ ⏱️ Activo: %muptime
+┃ 📈 Usuarios: %totalreg
+┗━━━━━━━━━━━━━━━━━━━━━━━┛
 
-Usuario: %name
-Nivel: %level      EXP: %exp / %maxexp
-Modo: %mode        Tiempo activo: %muptime
-Registrados: %totalreg
-
-ÍNDICE DE SECCIONES:
+📌 *Índice de categorías disponibles:*
 %index
-
-══════════════════════════════
 `.trim(),
 
-  header: '\n═ %category ═',
-  body: '  • %cmd',
-  footer: '',
-  after: `
-
-══════════════════════════════
-© Bot Formal • Todos los derechos reservados.
-`
+  header: '\n┌──〔 %category 〕──┐',
+  body: '│ ▸ %cmd',
+  footer: '└───────────────────────┘',
+  after: `\n✅ *Todos los comandos están operativos y listos para usarse.*`
 }
 
 let handler = async (m, { conn }) => {
@@ -56,7 +51,7 @@ let handler = async (m, { conn }) => {
     const name = await conn.getName(m.sender)
     const totalreg = Object.keys(global.db.data.users).length
     const muptime = clockString(process.uptime() * 1000)
-    const mode = global.opts.self ? 'Privado' : 'Público'
+    const mode = global.opts.self ? 'Privado 🔒' : 'Público 🌍'
 
     const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
       help: Array.isArray(p.help) ? p.help : [p.help],
@@ -64,36 +59,34 @@ let handler = async (m, { conn }) => {
       prefix: 'customPrefix' in p
     }))
 
-    // Crear objeto con categorías y comandos
-    const categories = {}
-    for (const tag in tags) categories[tag] = []
+    const sections = {}
+    for (const tag in tags) sections[tag] = []
 
     help.forEach(plugin => {
       plugin.tags.forEach(tag => {
-        if (tag in categories) {
-          categories[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
+        if (tag in sections) {
+          sections[tag].push(...plugin.help.map(cmd => plugin.prefix ? cmd : cmd))
         }
       })
     })
 
-    // Generar índice de secciones disponibles
-    let indexSections = ''
-    for (const tag of Object.keys(tags)) {
-      if (categories[tag].length) {
-        indexSections += `  - ${tags[tag]} (${categories[tag].length} comandos)\n`
-      }
-    }
+    // Índice dinámico con emojis
+    let indexText = Object.keys(tags).map(tag =>
+      sections[tag].length ? `• ${tags[tag]} (${sections[tag].length})` : null
+    ).filter(Boolean).join('\n')
 
-    // Construir texto del menú
-    let text = defaultMenu.before.replace('%index', indexSections)
+    // Construir cuerpo del menú
+    let menuText = [defaultMenu.before.replace('%index', indexText)]
     for (const tag of Object.keys(tags)) {
-      if (categories[tag].length) {
-        text += `\n${defaultMenu.header.replace('%category', tags[tag])}\n`
-        text += categories[tag].map(cmd => defaultMenu.body.replace('%cmd', cmd)).join('\n')
-        text += defaultMenu.footer
+      if (sections[tag].length) {
+        menuText.push(
+          defaultMenu.header.replace(/%category/g, tags[tag]),
+          sections[tag].map(cmd => defaultMenu.body.replace(/%cmd/g, cmd)).join('\n'),
+          defaultMenu.footer
+        )
       }
     }
-    text += defaultMenu.after
+    menuText.push(defaultMenu.after)
 
     const replace = {
       '%': '%',
@@ -106,14 +99,14 @@ let handler = async (m, { conn }) => {
       mode
     }
 
-    const finalText = text.replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
+    const finalText = menuText.join('\n').replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
 
     await conn.sendMessage(m.chat, {
       caption: finalText,
       image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
       buttons: [
-        { buttonId: 'menurpg', buttonText: { displayText: 'Ver RPG' }, type: 1 },
-        { buttonId: 'code', buttonText: { displayText: 'Ver Subbot' }, type: 1 }
+        { buttonId: 'menurpg', buttonText: { displayText: '🌌 Ver RPG' }, type: 1 },
+        { buttonId: 'code', buttonText: { displayText: '🧬 Subbot' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m })
@@ -127,7 +120,7 @@ let handler = async (m, { conn }) => {
 handler.command = new RegExp
 handler.tags = ['main']
 handler.register = true
-handler.customPrefix = /^(menu|menú|help|ayuda)$/i
+handler.customPrefix = /^(menu|menú|ayuda|help)$/i
 
 export default handler
 
