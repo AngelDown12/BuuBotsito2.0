@@ -6,6 +6,17 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
  
 
+━━━《  📡  ESTADO DEL BOT  📡  》━━━╮
+┃ ⏳  Activo: *%muptime*
+┃ 💻  Host: *Sky Hosting*
+┃ 👥  Usuarios: *%totalreg*
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+
+
+
+
+
   「 *📚 𝘐𝘯𝘧𝘰 📚* 」
 ┣━━━━━━━━━━━━━━┫
 ┃⋗ 👤 *.owner*  
