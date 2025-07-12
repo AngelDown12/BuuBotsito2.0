@@ -1,17 +1,19 @@
 const handler = async (m, { conn }) => {
-  const mensaje = {
-    text: '✨ *Bienvenido a SonicBot-MF* ✨\n\nSelecciona una opción:',
+  const templateMessage = {
+    image: { url: 'https://files.catbox.moe/5k7vwl.jpg' }, // Puedes cambiar la imagen
+    caption: `✨ *Bienvenido a SonicBot-MF* ✨\n\nSelecciona una opción del menú:`,
     footer: '🤖 Sky Hosting • SonicBot-MF',
-    buttons: [
-      { buttonId: '.menu', buttonText: { displayText: '📋 Menú' }, type: 1 },
-      { buttonId: '.owner', buttonText: { displayText: '👑 Creador' }, type: 1 },
-      { buttonId: '.estado', buttonText: { displayText: '📊 Estado' }, type: 1 }
-    ],
-    headerType: 1
+    templateButtons: [
+      { index: 1, urlButton: { displayText: '🌐 Instagram', url: 'https://instagram.com' } },
+      { index: 2, callButton: { displayText: '📞 Llamar al Owner', phoneNumber: '+5212731590195' } },
+      { index: 3, quickReplyButton: { displayText: '📋 Menú', id: '.menu' } },
+      { index: 4, quickReplyButton: { displayText: '👑 Creador', id: '.owner' } },
+      { index: 5, quickReplyButton: { displayText: '📊 Estado', id: '.estado' } }
+    ]
   }
 
-  await conn.sendMessage(m.chat, mensaje, { quoted: m })
+  await conn.sendMessage(m.chat, templateMessage, { quoted: m })
 }
 
-handler.command = ['po']
+handler.command = ['po2'] // Actívalo con .po2
 export default handler
