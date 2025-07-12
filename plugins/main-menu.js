@@ -113,7 +113,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         { buttonId: `${_p}menurpg`, buttonText: { displayText: '🏛️ M E N U R P G' }, type: 1 },
         { buttonId: `${_p}code`, buttonText: { displayText: '🕹 ＳＥＲＢＯＴ' }, type: 1 }
       ],
-      viewOnce: true
+      viewOnce: false
     }, { quoted: m })
 
   } catch (e) {
