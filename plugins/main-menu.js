@@ -1,47 +1,52 @@
 import { xpRange } from '../lib/levelling.js'
 
 let tags = {
-  main: 'Información 📚',
-  search: 'Búsquedas 🔎',
-  game: 'Juegos 🎮',
-  rpg: 'RPG 🌠',
-  rg: 'Registro 📁',
-  sticker: 'Stickers 🏞',
-  img: 'Imágenes 📸',
-  freefire: 'Free Fire 📌',
-  group: 'Grupos 👥',
-  logo: 'Logos 🎨',
-  nable: 'Funciones 🔁',
-  downloader: 'Descargas 📥',
-  tools: 'Herramientas 🔧',
-  fun: 'Diversión 🎲',
-  nsfw: 'Contenido 🔞',
-  owner: 'Administrador 👤',
-  audio: 'Audios 🔉',
-  advanced: 'Avanzado ⚙️',
-  anime: 'Anime 👑'
+  main: 'Información',
+  search: 'Búsquedas',
+  game: 'Juegos',
+  rpg: 'RPG',
+  rg: 'Registro',
+  sticker: 'Stickers',
+  img: 'Imágenes',
+  freefire: 'Free Fire',
+  group: 'Grupos',
+  logo: 'Logos',
+  nable: 'Funciones',
+  downloader: 'Descargas',
+  tools: 'Herramientas',
+  fun: 'Diversión',
+  nsfw: 'Contenido para adultos',
+  owner: 'Administrador',
+  audio: 'Audios',
+  advanced: 'Avanzado',
+  anime: 'Anime'
 }
 
 const defaultMenu = {
   before: `
-╭─────〔 PANEL DEL USUARIO 〕─────╮
-│ 👤 Usuario: %name
-│ 🔢 Nivel: %level (%exp/%maxexp XP)
-│ 🌐 Modo: %mode
-│ 🕒 Activo: %muptime
-│ 📋 Usuarios registrados: %totalreg
-╰────────────────────────────────╯
+══════════════════════════════
+         MENÚ DE COMANDOS
+══════════════════════════════
 
-▸ *Módulos disponibles:*
+Usuario: %name
+Nivel: %level      EXP: %exp / %maxexp
+Modo: %mode        Tiempo activo: %muptime
+Registrados: %totalreg
+
+ÍNDICE DE SECCIONES:
+%index
+
+══════════════════════════════
 `.trim(),
 
-  header: '\n📂 %category',
-  body: '   • %cmd',
+  header: '\n═ %category ═',
+  body: '  • %cmd',
   footer: '',
   after: `
 
-▸ Sistema operativo del bot funcionando correctamente.
-▸ Usa los comandos según las categorías.`
+══════════════════════════════
+© Bot Formal • Todos los derechos reservados.
+`
 }
 
 let handler = async (m, { conn }) => {
@@ -59,6 +64,7 @@ let handler = async (m, { conn }) => {
       prefix: 'customPrefix' in p
     }))
 
+    // Crear objeto con categorías y comandos
     const categories = {}
     for (const tag in tags) categories[tag] = []
 
@@ -70,17 +76,24 @@ let handler = async (m, { conn }) => {
       })
     })
 
-    let text = [defaultMenu.before]
+    // Generar índice de secciones disponibles
+    let indexSections = ''
     for (const tag of Object.keys(tags)) {
       if (categories[tag].length) {
-        text.push(
-          defaultMenu.header.replace(/%category/g, tags[tag]),
-          categories[tag].map(cmd => defaultMenu.body.replace(/%cmd/g, cmd)).join('\n'),
-          defaultMenu.footer
-        )
+        indexSections += `  - ${tags[tag]} (${categories[tag].length} comandos)\n`
       }
     }
-    text.push(defaultMenu.after)
+
+    // Construir texto del menú
+    let text = defaultMenu.before.replace('%index', indexSections)
+    for (const tag of Object.keys(tags)) {
+      if (categories[tag].length) {
+        text += `\n${defaultMenu.header.replace('%category', tags[tag])}\n`
+        text += categories[tag].map(cmd => defaultMenu.body.replace('%cmd', cmd)).join('\n')
+        text += defaultMenu.footer
+      }
+    }
+    text += defaultMenu.after
 
     const replace = {
       '%': '%',
@@ -93,14 +106,14 @@ let handler = async (m, { conn }) => {
       mode
     }
 
-    const finalText = text.join('\n').replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
+    const finalText = text.replace(/%(\w+)/g, (_, key) => replace[key] ?? '')
 
     await conn.sendMessage(m.chat, {
       caption: finalText,
       image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
       buttons: [
-        { buttonId: 'menurpg', buttonText: { displayText: '📌 Ver RPG' }, type: 1 },
-        { buttonId: 'code', buttonText: { displayText: '⚙️ Ver Subbot' }, type: 1 }
+        { buttonId: 'menurpg', buttonText: { displayText: 'Ver RPG' }, type: 1 },
+        { buttonId: 'code', buttonText: { displayText: 'Ver Subbot' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m })
