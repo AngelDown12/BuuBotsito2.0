@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 
 export async function before(m, { conn }) {
-//let img = await (await fetch(`https://tinyurl.com/2c5hk765`)).buffer()
+//let img = await (await fetch(`https://files.catbox.moe/2txrtp.jpg`)).buffer()
 let img = catalogo
  global.fake = {
     contextInfo: {
@@ -18,7 +18,7 @@ let img = catalogo
 					mediaUrl: null,
 					description: null,
 					previewType: "PHOTO",
-					thumbnailUrl: 'https://i.ibb.co/4jft6vs/file.jpg',
+					thumbnailUrl: 'https://files.catbox.moe/2txrtp.jpg',
 		           sourceUrl: canal,
 		           mediaType: 1,
                    renderLargerThumbnail: false
@@ -59,7 +59,7 @@ showAdAttribution: true,
 title: '𝐁𝐔𝐔 - 𝐁𝐎𝐓 🔮',
 body: '𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 🕷️',
 previewType: "PHOTO",
-thumbnailUrl: 'https://i.ibb.co/4jft6vs/file.jpg',
+thumbnailUrl: 'https://files.catbox.moe/2txrtp.jpg',
 sourceUrl: 'https://www.instagram.com/josssi_bot.ff',
 mediaType: 1,
 renderLargerThumbnail: false
