@@ -1,135 +1,181 @@
-import { xpRange } from '../lib/levelling.js'
+import { xpRange } from '../lib/levelling.js';
+import ws from 'ws';
+import fetch from 'node-fetch';
+import { generateWAMessageFromContent, prepareWAMessageMedia, proto } from '@whiskeysockets/baileys';
 
-const textCyberpunk = (text) => {
-  const charset = {
-    a: 'ᴀ', b: 'ʙ', c: 'ᴄ', d: 'ᴅ', e: 'ᴇ', f: 'ꜰ', g: 'ɢ',
-    h: 'ʜ', i: 'ɪ', j: 'ᴊ', k: 'ᴋ', l: 'ʟ', m: 'ᴍ', n: 'ɴ',
-    o: 'ᴏ', p: 'ᴘ', q: 'ǫ', r: 'ʀ', s: 'ꜱ', t: 'ᴛ', u: 'ᴜ',
-    v: 'ᴠ', w: 'ᴡ', x: 'x', y: 'ʏ', z: 'ᴢ'
-  }
-  return text.toLowerCase().split('').map(c => charset[c] || c).join('')
-}
 
-let tags = {
-  'main': textCyberpunk('sistema'),
-  'group': textCyberpunk('grupos'),
-  'serbot': textCyberpunk('sub bots'),
-}
+const textbot = '𝐊𝐈𝐑𝐈𝐓𝐎 - 𝐁𝐎𝐓 𝐌𝐃☆';
+const dev = 'Deylin - Bot';
+const redes = 'https://github.com/Deylin-Eliac';
+const channelRD = {
+  id: '120363162731134342@newsletter',
+  name: '𝐊𝐈𝐑𝐈𝐓𝐎 - 𝐁𝐎𝐓 𝐌𝐃☆'
+};
 
-const defaultMenu = {
-  before: `⚠️ 𝗔𝗟𝗘𝗥𝗧𝗔 𝗗𝗘 𝗦𝗜𝗦𝗧𝗘𝗠𝗔 ⚠️ 
-┃ ⛧ 𝙸𝙽𝙸𝙲𝙸𝙰𝙽𝙳𝙾: 𝙱𝙻𝙲-𝚂𝚈𝚂.exe
-┃ ⛧ 𝚄𝚂𝚄𝙰𝚁𝙸𝙾: %name
-┃ ⛧ 𝙼𝙾𝙳𝙾: %mode
-┃ ⛧ 𝙴𝚂𝚃𝙰𝙳𝙾:  𝗢𝗡𝗟𝗜𝗡𝗘 👻
-╚══⫷🔻𝙽𝙴𝚃𝚁𝚄𝙽𝙽𝙴𝚁🔻⫸══╝
-
-╭─[𝗘𝗦𝗧𝗔𝗗𝗢 𝗗𝗘 𝗨𝗦𝗨𝗔𝗥𝗜𝗢]─╮
-│ 📊 𝗡𝗜𝗩𝗘𝗟: %level
-│ ⚡ 𝗘𝗫𝗣: %exp / %maxexp
-│ 🧮 𝗨𝗦𝗨𝗔𝗥𝗜𝗢𝗦: %totalreg
-│ ⏱ 𝗧𝗜𝗘𝗠𝗣𝗢 𝗔𝗖𝗧𝗜𝗩𝗢: %muptime
-╰──────────────────╯
-
-🧬 *𝗡𝗢𝗗𝗢 𝗛𝗔𝗖𝗞 𝗔𝗖𝗧𝗜𝗩𝗔𝗗𝗢*
-✦ Elige un comando para ejecutar protocolo.
-✦ Operador: *The Carlos 👑*
-
-%readmore
-`.trimStart(),
-
-  header: '\n╭─〔 🦠 %category 〕─╮',
-  body: '│ ⚙️ %cmd\n',
-  footer: '╰────────────────╯',
-  after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 ☠️ - Sistema ejecutado con éxito.'
-}
+const tags = {
+  anime: 'ANIME',
+  main: 'INFO',
+  search: 'SEARCH',
+  game: 'GAME',
+  serbot: 'SUB BOTS',
+  rpg: 'RPG',
+  sticker: 'STICKER',
+  group: 'GROUPS',
+  nable: 'ON / OFF',
+  premium: 'PREMIUM',
+  downloader: 'DOWNLOAD',
+  tools: 'TOOLS',
+  fun: 'FUN',
+  nsfw: 'NSFW',
+  cmd: 'DATABASE',
+  owner: 'OWNER',
+  audio: 'AUDIOS',
+  advanced: 'ADVANCED',
+  weather: 'WEATHER',
+  news: 'NEWS',
+  finance: 'FINANCE',
+  education: 'EDUCATION',
+  health: 'HEALTH',
+  entertainment: 'ENTERTAINMENT',
+  sports: 'SPORTS',
+  travel: 'TRAVEL',
+  food: 'FOOD',
+  shopping: 'SHOPPING',
+  productivity: 'PRODUCTIVITY',
+  social: 'SOCIAL',
+  security: 'SECURITY',
+  custom: 'CUSTOM'
+};
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
-    let tag = `@${m.sender.split("@")[0]}`
-    let { exp, level } = global.db.data.users[m.sender]
-    let { min, xp, max } = xpRange(level, global.multiplier)
-    let name = await conn.getName(m.sender)
-    let _uptime = process.uptime() * 1000
-    let muptime = clockString(_uptime)
-    let totalreg = Object.keys(global.db.data.users).length
-    let mode = global.opts["self"] ? "Privado" : "Público"
+    let userId = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.sender;
+    let user = global.db.data.users[userId];
+    let name = conn.getName(userId);
+    let mode = global.opts["self"] ? "Privado" : "Público";
+    let totalCommands = Object.keys(global.plugins).length;
+    let totalreg = Object.keys(global.db.data.users).length;
+    let uptime = clockString(process.uptime() * 1000);
+    const users = [...new Set([
+      ...(global.conns || []).filter(conn => 
+        conn.user && conn.ws?.socket?.readyState !== ws.CLOSED
+      )
+    ])];
 
-    let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
-      help: Array.isArray(p.help) ? p.help : [p.help],
-      tags: Array.isArray(p.tags) ? p.tags : [p.tags],
-      prefix: 'customPrefix' in p,
-      limit: p.limit,
-      premium: p.premium,
-      enabled: !p.disabled,
-    }))
+    if (!global.db.data.users[userId]) {
+      global.db.data.users[userId] = { exp: 0, level: 1 };
+    }
 
-    for (let plugin of help) {
-      if (plugin.tags) {
-        for (let t of plugin.tags) {
-          if (!(t in tags) && t) tags[t] = textCyberpunk(t)
+    let { exp, level } = global.db.data.users[userId];
+    let { min, xp, max } = xpRange(level, global.multiplier);
+
+    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => ({
+      help: Array.isArray(plugin.help) ? plugin.help : (plugin.help ? [plugin.help] : []),
+      tags: Array.isArray(plugin.tags) ? plugin.tags : (plugin.tags ? [plugin.tags] : []),
+      limit: plugin.limit,
+      premium: plugin.premium,
+    }));
+
+    let menuText = `
+╭━〔 𝐊𝐈𝐑𝐈𝐓𝐎 - 𝐁𝐎𝐓 𝐌𝐃☆ 〕━⬣
+┃ ✦ Nombre: @${userId.split('@')[0]}
+┃ ✦ Tipo: ${(conn.user.jid == global.conn.user.jid ? 'Principal 🅥' : 'Prem Bot 🅑')}
+┃ ✦ Modo: ${mode}
+┃ ✦ Usuarios: ${totalreg}
+┃ ✦ Uptime: ${uptime}
+┃ ✦ Comandos: ${totalCommands}
+┃ ✦ Sub-Bots: ${users.length}
+╰━──────────────⬣
+（＾∀＾●）ﾉｼ 𝐋𝐈𝐒𝐓𝐀 𝐃𝐄 𝐂𝐎𝐌𝐀𝐍𝐃𝐎𝐒↷↷
+
+${Object.keys(tags).map(tag => {
+      const commandsForTag = help.filter(menu => menu.tags.includes(tag));
+      if (commandsForTag.length === 0) return ''; 
+      
+      const commands = commandsForTag.map(menu => 
+        menu.help.map(help => `┃ ✦ ${_p}${help}${menu.limit ? ' ◜⭐◞' : ''}${menu.premium ? ' ◜🪪◞' : ''}`).join('\n')
+      ).join('\n');
+
+      return `╭━━〔 ${tags[tag]} ${getRandomEmoji()} 〕━━⬣\n${commands}\n╰━━━━━━━━━━━━━━⬣`;
+    }).filter(Boolean).join('\n\n')}
+
+👑 © Powered by Deylin - Bot`;
+
+    await m.react('👑');
+
+    const image = await (await fetch('https://raw.githubusercontent.com/Deylin-Eliac/kirito-bot-MD/main/src/catalogo.jpg')).buffer();
+    const media = await prepareWAMessageMedia({ image: image }, { upload: conn.waUploadToServer });
+
+    const msg = generateWAMessageFromContent(m.chat, {
+      viewOnceMessage: {
+        message: {
+          messageContextInfo: {
+            deviceListMetadata: {},
+            deviceListMetadataVersion: 2
+          },
+          interactiveMessage: {
+            header: {
+              hasMediaAttachment: true,
+              title: textbot,
+              imageMessage: media.imageMessage
+            },
+            body: {
+              text: menuText.trim()
+            },
+            footer: {
+              text: dev
+            },
+            nativeFlowMessage: {
+              buttons: [
+                {
+                  name: "quick_reply",
+                  buttonParamsJson: "{\"display_text\":\"Donar\",\"id\":\".donar\"}"
+                },
+                {
+                  name: "quick_reply",
+                  buttonParamsJson: "{\"display_text\":\"Auto Verificar\",\"id\":\".reg name.19\"}"
+                },
+                {
+                  name: "quick_reply",
+                  buttonParamsJson: "{\"display_text\":\"Sistema\",\"id\":\".sistema\"}"
+                },
+                {
+                  name: "cta_url",
+                  buttonParamsJson: "{\"display_text\":\"Canal Kirito\",\"url\":\"https://whatsapp.com/channel/0029VawF8fBBvvsktcInIz3m\"}"
+                }
+              ]
+            }
+          }
         }
       }
-    }
+    }, {});
 
-    const { before, header, body, footer, after } = defaultMenu
-
-    let _text = [
-      before,
-      ...Object.keys(tags).map(tag => {
-        const cmds = help
-          .filter(menu => menu.tags.includes(tag))
-          .map(menu => menu.help.map(cmd => body.replace(/%cmd/g, menu.prefix ? cmd : _p + cmd)).join('\n'))
-          .join('\n')
-        return `${header.replace(/%category/g, tags[tag])}\n${cmds}\n${footer}`
-      }),
-      after
-    ].join('\n')
-
-    let replace = {
-      '%': '%',
-      name,
-      level,
-      exp: exp - min,
-      maxexp: xp,
-      totalreg,
-      mode,
-      muptime,
-      readmore: String.fromCharCode(8206).repeat(4001)
-    }
-
-    let text = _text.replace(/%(\w+)/g, (_, key) => replace[key] || '')
-
-    await conn.sendMessage(m.chat, {
-    text: `⌬ 📡 ᴄʏʙᴇʀ ᴍᴇɴᴜ sʏsᴛᴇᴍ ɪɴɪᴄɪᴀɴᴅᴏ...\n⚙️ Cargando comandos...`,
-      mentions: [m.sender]
-    }, { quoted: m })
-
-    await conn.sendMessage(m.chat, {
-  image: { url: 'https://files.catbox.moe/5k7vwl.jpg' },
-  caption: text,
-  footer: '🧠 BLACK CLOVER SYSTEM ☘️',
-  templateButtons: [
-    { index: 1, quickReplyButton: { displayText: '🏛️ M E N U R P G', id: `${_p}menurpg` } },
-    { index: 2, quickReplyButton: { displayText: '🕹 ＳＥＲＢＯＴ', id: `${_p}code` } }
-  ]
-}, { quoted: m })
-
+    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
   } catch (e) {
-    console.error(e)
-    conn.reply(m.chat, '❎ Error al generar el menú del sistema.', m)
+    console.error('Error in menu:', e);
+    conn.reply(m.chat, '❎ Lo sentimos, el menú tiene un error.', m);
+    throw e;
   }
-}
+};
 
-handler.help = ['menu', 'menú']
-handler.tags = ['main']
-handler.command = ['menu', 'menú', 'help', 'ayuda']
-handler.register = true
-export default handler
+handler.help = ['menu', 'allmenu'];
+handler.tags = ['main'];
+handler.command = ['menu', 'allm', 'menú'];
+handler.register = true;
+
+export default handler;
+
+const more = String.fromCharCode(8206);
+const readMore = more.repeat(4001);
 
 function clockString(ms) {
-  let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-  let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-  let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
+  let h = Math.floor(ms / 3600000);
+  let m = Math.floor(ms / 60000) % 60;
+  let s = Math.floor(ms / 1000) % 60;
+  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':');
+}
+
+function getRandomEmoji() {
+  const emojis = ['👑', '🔥', '🌟', '⚡'];
+  return emojis[Math.floor(Math.random() * emojis.length)];
 }
