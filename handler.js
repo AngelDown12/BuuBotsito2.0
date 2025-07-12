@@ -465,16 +465,16 @@ console.error(e)
 
 global.dfail = (type, m, conn, usedPrefix) => {
     let msg = {
-        rowner: `❄️ Hola, este comando solo puede ser utilizado por el *Creador* del Bot.`,
-        owner: `🗣️ Hola, este comando solo puede ser utilizado por el *Creador* del Bot y *Sub Bots*.`,
-        mods: `🤖 Hola, este comando solo puede ser utilizado por los *Moderadores* de la Bot.`,
-        premium: `⭐ Hola, este comando solo puede ser utilizado por Usuarios *Premium*.`,
-        group: `😃 Hola, este comando solo puede ser utilizado en *Grupos*.`,
-        private: `🕐 Hola, este comando solo puede ser utilizado en mi Chat *Privado*.`,
-        admin: `😸 Hola, este comando solo puede ser utilizado por los *Administradores* del Grupo.`,
-        botAdmin: `🤖 Hola, el bot debe ser *Administrador* para ejecutar este Comando.`,
-        unreg: `👸🏻 Hola, para usar este comando debes estar *Registrado.*\n\nUtiliza: */reg nombre.edad*\n\n> Ejemplo: /reg Sofi.17`,
-        restrict: `🌸 Hola, esta característica está *deshabilitada.*`  
+        rowner: "🚫 𝐄𝐬𝐭𝐞 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐬𝐨𝐥𝐨 𝐄𝐬 𝐏𝐚𝐫𝐚 𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 𝐌𝐢 𝐂𝐫𝐞𝐚𝐝𝐨𝐫.",
+        owner: "😴 𝐄𝐬𝐭𝐞 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐬𝐨𝐥𝐨 𝐄𝐬 𝐏𝐚𝐫𝐚 𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 𝐌𝐢 𝐂𝐫𝐞𝐚𝐝𝐨𝐫.",
+        mods: "🪡 𝐄𝐬𝐭𝐞 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐬𝐨𝐥𝐨 𝐄𝐬 𝐏𝐚𝐫𝐚 𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 𝐌𝐢 𝐂𝐫𝐞𝐚𝐝𝐨𝐫.",
+        premium: "🔑 𝐍𝐨 𝐄𝐫𝐞𝐬 𝐮𝐬𝐮𝐚𝐫𝐢𝐨 𝐏𝐫𝐞𝐦𝐢𝐮𝐦.",
+        group: "🕷️ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐕𝐚𝐥𝐢𝐝𝐨 𝐒𝐨𝐥𝐨 𝐩𝐚𝐫𝐚 𝐆𝐫𝐮𝐩𝐨𝐬.",
+        private: "💬 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐒𝐨𝐥𝐨 𝐕𝐚𝐥𝐢𝐝𝐨 𝐩𝐚𝐫𝐚 𝐂𝐡𝐚𝐭 𝐩𝐫𝐢𝐯𝐚𝐝𝐨.",
+        admin: "‼️¿𝐐𝐮𝐢𝐞𝐧 𝐞𝐫𝐞𝐬? 𝐓𝐮 𝐧𝐨 𝐞𝐫𝐞𝐬 𝐚𝐝𝐦𝐢𝐧.",
+        botAdmin: "⚠️ 𝐍𝐨 𝐩𝐮𝐞𝐝𝐨 𝐮𝐬𝐚𝐫 𝐄𝐬𝐭𝐞 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐏𝐨𝐫 𝐐𝐮𝐞 𝐧𝐨 𝐒𝐨𝐲 𝐀𝐝𝐦𝐢𝐧.",
+        unreg: "*`𝐔𝐬𝐮𝐚𝐫𝐢𝐨 𝐍𝐨 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐝𝐨`*\n\n`𝐏𝐚𝐫𝐚 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐬𝐞:`\n\n> .𝐫𝐞𝐠 𝐧𝐨𝐦𝐛𝐫𝐞.𝐞𝐝𝐚𝐝\n\n`𝐄𝐣𝐞𝐦𝐩𝐥𝐨:`\n\n> .𝐫𝐞𝐠 𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧.18",
+        restrict: "‼️𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐃𝐞𝐬𝐚𝐜𝐭𝐢𝐯𝐚𝐝𝐨 𝐏𝐨𝐫 𝐂𝐫𝐢𝐬𝐭𝐢𝐚𝐧 𝐌𝐢 𝐂𝐫𝐞𝐚𝐝𝐨𝐫 🕷️."  
     }[type]
     if (msg) return conn.reply(m.chat, msg, m, rcanal).then(_ => m.react('✖️'))
 }
