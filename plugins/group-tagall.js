@@ -1,27 +1,26 @@
-const handler = async (m, {isOwner, isAdmin, conn, text, participants, args, command}) => {
-  if (!(isAdmin || isOwner)) {
-    global.dfail('admin', m, conn);
-    throw false;
-    var sum = member.length;
-  } else {
-    var sum = 0;
-    const total = 0;
-    var member = 0;
-  }
-  const pesan = args.join` `;
-  const oi = `${pesan}`;
-  let teks = `𝑺𝑶𝑭𝑰 𝑩𝑶𝑻 👸🏻\n\n *Integrantes :  ${participants.length}* ${oi}\n\n┌──⭓ Activos 🌱\n`;
-  for (const mem of participants) {
-    teks += `⚡ @${mem.id.split('@')[0]}\n`;
-  }
-  teks += `└───────⭓
+const wm = '𝐁𝐔𝐔 𝐁𝐎𝐓 🔮';
 
-Creadora: 👸🏻 wa.me/50765609370`;
-  conn.sendMessage(m.chat, {text: teks, mentions: participants.map((a) => a.id)} );
+const handler = async (m, { conn, participants, isAdmin, isOwner }) => {
+  if (!m.isGroup) return global.dfail('group', m, conn);
+  if (!isAdmin && !isOwner) return global.dfail('admin', m, conn);
+
+  const texto = (m.text || '').trim().toLowerCase();
+  if (texto !== 'todos' && texto !== '.todos') return; // Solo responde a "todos" o ".todos" exacto
+
+  const emoji = '👅';
+  const lista = participants.map(u => `${emoji} @${u.id.split('@')[0]}`).join('\n');
+
+  const textoFinal = `𝐈𝐍𝐕𝐎𝐂𝐀𝐍𝐃𝐎 𝐁𝐔𝐒𝐒 🔮\n\n${lista}\n\n${wm}`;
+
+  await conn.sendMessage(m.chat, {
+    text: textoFinal,
+    mentions: participants.map(u => u.id)
+  });
 };
-handler.help = ['todos'];
-handler.tags = ['group'];
-handler.command = /^(tagall|invocar|marcar|todos|invocación|ta)$/i;
-handler.admin = true;
+
+handler.customPrefix = /^(\.|)?todos$/i; // Solo "todos" o ".todos"
+handler.command = new RegExp(); // sin prefijo
 handler.group = true;
+handler.admin = true;
+
 export default handler;
