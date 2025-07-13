@@ -1,6 +1,6 @@
 let handler = async (m, { conn }) => {
-let img = 'https://files.catbox.moe/skcpb6.mp4' 
-let texto = `*_M E N Ú - A U D I O S_* 🗣️
+  let img = 'https://files.catbox.moe/skcpb6.mp4';
+  let text = `*_M E N Ú - A U D I O S_* 🗣️
 「 *.on audios* 」  
 
 1. _Takataka_.
@@ -57,30 +57,32 @@ let texto = `*_M E N Ú - A U D I O S_* 🗣️
 52. _Teamo_.
 
 𝙽𝚘 𝚎𝚜 𝚗𝚎𝚌𝚎𝚜𝚊𝚛𝚒𝚘 𝚞𝚝𝚒𝚕𝚒𝚣𝚊𝚛 𝚙𝚛𝚎𝚏𝚒𝚓𝚘𝚜「 *./#* 」 
- `
+  `
 
-const fkontak = {
-	"key": {
-    "participants":"0@s.whatsapp.net",
-		"remoteJid": "status@broadcast",
-		"fromMe": false,
-		"id": "Halo"
-	},
-	"message": {
-		"contactMessage": {
-			"vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
-		}
-	},
-	"participant": "0@s.whatsapp.net"
-}
+  const fkontak = {
+    "key": {
+      "participants": "0@s.whatsapp.net",
+      "remoteJid": "status@broadcast",
+      "fromMe": false,
+      "id": "Halo"
+    },
+    "message": {
+      "contactMessage": {
+        "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
+      }
+    },
+    "participant": "0@s.whatsapp.net"
+  };
+
   await conn.sendMessage(m.chat, {
-  video: { url: img },
-  caption: text,
-  gifPlayback: true
-}, { quoted: m });
-}; // ← ESTA ES LA QUE FALTABA
-}
-handler.help = ['menu2']
-handler.tags = ['main', 'audio'] 
-handler.command = ['menu2', 'menuaudios'] 
-export default handler
+    video: { url: img },
+    caption: text,
+    gifPlayback: true
+  }, { quoted: m });
+}; // ✅ ← Esta era la llave que faltaba
+
+handler.help = ['menu2'];
+handler.tags = ['main', 'audio'];
+handler.command = ['menu2', 'menuaudios'];
+
+export default handler;
