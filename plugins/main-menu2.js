@@ -73,7 +73,12 @@ const fkontak = {
 	},
 	"participant": "0@s.whatsapp.net"
 }
-await conn.sendFile(m.chat, img, 'img.jpg', texto, m, null, fkontak)
+  await conn.sendMessage(m.chat, {
+  video: { url: img },
+  caption: text,
+  gifPlayback: true
+}, { quoted: m });
+}; // ← ESTA ES LA QUE FALTABA
 }
 handler.help = ['menu2']
 handler.tags = ['main', 'audio'] 
